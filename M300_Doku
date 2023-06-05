@@ -1,7 +1,7 @@
 ssh key auf Github 
   Leider habe ich keine Screenshots der Erstellung des Keypairs gemacht, weshalb ich diese hier nicht hochladen konnte. 
   Jedoch kann ich Ihnen hier mein ssh-key, welchen ich auf Github hochgeladen habe, zeigen:
-  ![ssh-key-on-github](M300-Services/ssh-key.PNG)
+  ![ssh-key-on-github](
   
 Git client
   Zuerst habe ich für den Git Bash Client meinen Benutzernamen definiert:
