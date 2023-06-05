@@ -1,35 +1,4 @@
 M300 - 10 Toolumgebung
-===================
-
-Diese Wikiseite behandelt die Installation von GitHub, VirtualBox, Vagrant und Visual Studio Code.
-
-#### Lernziele
-
-Die nachstehende Dokumentation zeigt alle Schritte auf, die es zur Einrichtung einer vollständig funktionsfähigen Toolumgebung benötigt werden.
-
-#### Voraussetzungen
-
-* PC/Notebook mit min. 8 GB freiem RAM, ca. 80 GB freiem HD-Speicher und einer Ethernet-Netzwerkkarte.
-* Einfache [Linux und Apache Web Server](../80-Ergaenzungen/) Kenntnisse sind von Vorteil.
-* Ein schneller Netzwerk- (Kabel!) und Internet-Anschluss
-
-#### Allgemeine Hinweise
-
-Die meisten Arbeiten erfolgen auf der Kommandozeile, hier als **Terminal** (*Bash*) bezeichnet.
-
-In der Kommandozeile bzw. im Terminal läuft die "Bash" Shell. Das ist nur die Shell von Linux und noch kein vollständiges Linux System. 
-
-Diese Umgebung wird verwendet, weil benötige Programme wie `git`, `ssh-keygen` in der Powershell nicht zur Verfügung stehen. 
-
-Um sich im Filesystem zurechtzufinden, sind folgende Befehle nützlich:
-* `cd /Verzeichnis` wechselt in Verzeichnis z.B. `cd /Users`, alternativ kann die Windows Schreibweise in " verwendet werden, z.B. `cd "C:\Users"`
-* Alternativ kann im Windows Explorer jederzeit ein Terminal mittels rechter Maustaste und `Git Bash Here` geöffnet werden.
-* `cd ~` Wechsel ins eigene Home-Verzeichnis. Dort werden SSH-Keys etc. abgelegt.
-* `cd -` wird auf das zuletzt verwendete Verzeichnis gewechselt.
-* Die Laufwerke von Windows stehen als `/c`, `/d/` zur Verfügung, Bsp. `cd /c/Users` und `cd "C:\Users"` sind indentisch
-* `ls -l` zeigt die Dateien im aktuellen Verzeichnis an
-* `pwd` zeigt den aktuellen Pfad an.
-* Die Windows Befehle stehen auch im Terminal zur Verfügung, z.B. `notepad README.md` 
 
 #### Inhaltsverzeichnis
 
@@ -218,12 +187,15 @@ Hierzu müssen folgende Schritte durchgeführt werden:
 
       Cloning into 'my_M300'...
     ``` 
+![git-clone](../screenshots/git-repo-klonen.PNG)
+
 4. Repository aktualisieren und Status anzeigen:
     ```Shell
       $ git pull
 
       Already up to date.
     ```
+![git-pull](../screenshots/git-pull.PNG)
 
 ### Repository hochladen (Push)
 ***
@@ -244,6 +216,8 @@ Hierzu müssen folgende Schritte durchgeführt werden:
     ```Shell
       $ git push
     ```
+![git-push](../screenshots/git-push.PNG)
+
 6.  Nun sollte der Master-Branch des Repositorys ebenfalls aktualisiert sein
 
 ### Übersicht "How to Push"
@@ -315,6 +289,10 @@ Nutzen Sie Wartezeiten produktiv, zum Beispiel um Ihre Lernumgebung einzurichten
 
 Falls Linux nicht bootet: In den *Settings* der virtuellen Maschine unter *Speicher* überprüfen, ob die virt. HD am IDE-Controller angeschlossen ist. 
 
+![VM-Erstellung](../screenshots/vm_erstellen_allgemein.PNG)
+
+![](../screenshots/vm_erstellen_system.PNG)
+
 ### VM einrichten
 ***
 Die virtuelle Maschine (VM) sollte nun soweit betriebsbereit sein, sprich der Zugriff auf den Home-Desktop ist möglich. 
@@ -339,8 +317,13 @@ Die virtuelle Maschine (VM) sollte nun soweit betriebsbereit sein, sprich der Zu
    ```Shell 
    $  sudo reboot
    ```
+![synaptic](../screenshots/synaptic.PNG)
+
 8. Gängiger Web-Browser (z.B. Firefox) starten und prüfen, ob der Standard-Content des Webservers unter "http://127.0.0.01:80" (localhost) erreichbar ist
 9. Browser-Fenster schliessen und VM wieder herunterfahren/stoppen
+    
+![ubuntu-apache-server](../screenshots/apache-works.PNG)
+
 10. Mit dem Kapitel 4 (Vagrant) fortfahren
 
 ![](../images/Vagrant_36x36.png "Vagrant")  04 - Vagrant
@@ -379,6 +362,8 @@ Nachfolgend sind einzelne Schritte zur Einrichtung von Vagrant dokumentiert:
       $ vagrant init ubuntu/xenial64        #Vagrantfile erzeugen
       $ vagrant up --provider virtualbox    #Virtuelle Maschine erstellen & starten
     ``` 
+    ![vagrant-vm](../screenshots/vagrant_VM.PNG)
+
 4. Die VM ist nun in Betrieb (erscheint auch in der Übersicht innerhalb von VirtualBox) und kann via SSH-Zugriff bedient werden:
     ```Shell
       $ cd Pfad/zu/meiner/Vagrant-VM      #Zum Verzeichnis der VM wechseln
@@ -390,6 +375,8 @@ Nachfolgend sind einzelne Schritte zur Einrichtung von Vagrant dokumentiert:
       $ df -h       #Freier Festplattenspeicher
       $ free -m     #Freier Arbeitsspeicher
     ``` 
+    ![vagrant-ssh](../screenshots/vagrant_ssh_connection.PNG)
+
 5. VM über VirtualBox-GUI ausschalten
 
 Schlussfolgerung: Eine VM lässt sich mit Vagrant eindeutig schneller und unkomplizierter erstellen!
@@ -428,6 +415,8 @@ Schlussfolgerung: Keine erheblichen Unterschiede zum ersten Teil (ohne Share) un
 ***
 Um den Automatisierungsgrad von Vagrant im Rahmen dieser Dokumentation etwas besser hervorzuheben, richten wir eine VM, dass sie direkt mit einem vorinstallierten Apache-Webserver startet. Dazu können wir im Vagrantfile den Code etwas leicht abändern und direkt auf Bash-Ebene mit einfachen Befehlen arbeiten. 
 
+![vagrant-apache-code](../screenshots/VagrantFile_apache.PNG)
+
 Nachfolgend wird die VM mit einem bereits abgeänderten File bzw. VM aus dem M300-Repository erstellt:
 
 1. Terminal (*Bash*) öffnen
@@ -446,7 +435,6 @@ Nachfolgend wird die VM mit einem bereits abgeänderten File bzw. VM aus dem M30
       $ vagrant destroy -f
     ```
 7. Vagrant ist nun komplett einsatzfähig!
-
 
 ![](../images/VisualStudioCode_36x36.png "Visual Studio Code") 05 - Visual Studio Code
 ======
@@ -483,6 +471,10 @@ Dazu müssen folgende Anweisungen befolgt werden:
 3. Auf `Install` klicken und anschliessend auf `Reload`, um die Extension in den Arbeitsbereich zu laden.
 4. Nun können die Extensions angewendet werden. Für Markdown ist [diese Liste](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet/"github.com") sehr hilfreich.
 
+![Visual-Studio-Code-Extensions-1](../screenshots/vsc_extensions_1.PNG)
+
+![Visual-Studio-Code-Extensions-2](../screenshots/vsc_extensions_2.PNG)
+
 
 ### Einstellungen anpassen
 ***
@@ -507,6 +499,8 @@ Damit keine Dateien der virtuellen Maschinen dem Cloud-Repository hinzugefügt w
         "**/.DS_Store": true
       },
     ```
+![Dateitypen-Exkludieren](../screenshots/files-exkludieren.PNG)
+
 5. Änderungen speichern und die Einstellungen schliessen
    
 Nun sollten keine Dateien mit den Endungen .git / .svn / .hg / .vagrant / .DS_store hochgeladen werden. Wie man die Änderungen innerhalb von Visual Studio Code richtig pusht, wird im nachfolgenden Abschnitt erklärt. 
@@ -521,43 +515,4 @@ Nun sollten keine Dateien mit den Endungen .git / .svn / .hg / .vagrant / .DS_st
 6. Bei den 3 Punkten (...) die Funktion **Push** aufrufen
 7. Warten, bis Dateien vollständig gepusht wurden
 
-***
-### Alternative Editoren
-
-#### Atom IO
-
-https://atom.io/  
-Atom ist ein Open-Source-Texteditor, der als integrierte Entwicklungsumgebung für eine grosse Auswahl an Programmiersprachen verwendet werden kann, der dank des durchgehenden Supports der Git-Community viele Möglichkeiten eröffnet.
-
-Alle Features eines guten Editors sind enthalten, wie Syntax-Highlighter, automatische Erkennung von Sprachen, automatische Textvervollständigung, die Möglichkeit mehrere Panels zu verwenden und Projekte in verschiedenen Ordnern zu sichern, Support für Snippets und eine leistungsstarke Suche. Der grösste Vorteil ist die Modularität der Umgebung (Features können durch  zusätzliche Pakete hinzugefügt werden). Es inkludiert auch ein Steuersystem für Git, mit dem der Inhalte über die GitHub-Plattform veröffentlicht wird.
-
-Atom ist für mehrere Plattformen (Windows, Linux und Mac) ausgelegt. Die IDE besticht mit ihren Anpassungsoptionen: Beim Schreiben stehen einem mehr als 2.000 Pakete und 600 Themes zur Verfügung. Mit der grossen Menge an Anpassungen und Features ist sie sicherlich eines der besten Entwicklertools am Markt. Sie verbraucht ausserdem nur wenig Speicherplatz auf dem Computer im Vergleich zu ähnlichen Alternativen. 
-***
-
-#### StackEdit
-
-StackEdit ist ein Markdown Editor im Browser.
-
-* [https://stackedit.io/](https://stackedit.io/)
-
-#### Typora
-
-Typora bietet Ihnen eine nahtlose Erfahrung als Leser und Autor. Es entfernt das Vorschaufenster, den Modusumschalter, die Syntaxsymbole des Markdown-Quellcodes und alle anderen unnötigen Ablenkungen. Diese werden durch eine echte Live-Vorschau ersetzt, damit Sie sich auf den Inhalt selbst konzentrieren können. Leider ist Typora nicht mehr kostenlos verfügbar.
-
-* [Typora](https://typora.io/)
-
-
-![](../images/Magnifier_36x36.png "Quellenverzeichnis") 06 - Quellenverzeichnis
-====== 
-***
-
-> [⇧ **Nach oben**](#inhaltsverzeichnis)
-
-  * Formatierung Markdown-Cheatsheet: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
-
-  * Code- und Syntax-Highlighting: https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
-
-  * Das SSH-Key-Problem: https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
-
-
-___
+![repo-in-vsc](../screenshots/repo-in-vsc.PNG)
