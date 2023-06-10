@@ -70,33 +70,6 @@ Folgende Arbeiten müssen gemacht werden:
 
 Datei %HOME%/.ssh/id_rsa.pub oder $HOME/.ssh/id_rsa.pub in Zwischenablage kopieren.
 
-**macOS**
-
-1.  Terminal (*Bash*) öffnen
-2.  SSH-Agent starten:
-    ```Shell
-      $ eval "$(ssh-agent -s)"
-      Agent pid 931
-    ```
-3.  Ab Version macOS High Sierra 10.12.2 muss das `~/.ssh/config` File angepasst werden, damit SSH-Keys automatisch dem SSH-Agent hinzugefügt werden:
-    ```Shell
-      $ sudo nano ~/.ssh/config
-      
-      Host *
-      AddKeysToAgent yes
-      UseKeychain yes
-      IdentityFile ~/.ssh/id_rsa
-    ```
-4.  Nun muss der Schlüssel dem Agent nur noch hinzugefügt werden:
-    ```Shell
-      $ ssh-add -k ~/.ssh/id_rsa
-    ```
-5.  Der SSH-Key muss nun nur noch kopiert und anschliessend dem GitHub-Account hinzugefügt werden (siehe "SSH-Key hinzufügen"):
-    ```Shell
-      $ cat ~/.ssh/id_rsa.pub
-      # Kopiert den Angezeiten Inhalt der id_rsa.pub Datei in die Zwischenablage
-    ``` 
-
 ### SSH-Key hinzufügen
 ***
 1.  Anmelden unter www.github.com

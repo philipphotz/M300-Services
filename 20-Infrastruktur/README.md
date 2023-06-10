@@ -13,145 +13,17 @@ Sie können eine Dynamischen Infrastruktur-Plattform (Private Cloud) einrichten,
 
 #### Inhaltsverzeichnis
 
-* 01 - [Cloud Computing](#-01---cloud-computing)
-* 02 - [Infrastructure as Code](#-02---infrastructure-as-code)
-* 03 - [Vagrant](#-03---vagrant)
-* 04 - [Packer (optional)](#-04---packer)
-* 05 - [AWS Cloud (optional)](#-05---aws-cloud)
-* 06 - [Reflexion](#-06---reflexion)
-* 07 - [Fragen](Fragen.md)
-* 08 - [Quellenverzeichnis](#-08---quellenverzeichnis)
-* 09 - [Beispiele (für LB2)](#-09---beispiele-für-lb2)
-* 10 - [LB 2 hands-on](LB2.md)
-* 11 - [Mögliche Serverdienste für die Automatisierung](https://wiki.ubuntuusers.de/Serverdienste/)
+* 01 - [Vagrant](#-03---vagrant)
+* 02 - [Packer (optional)](#-04---packer)
+* 03 - [AWS Cloud (optional)](#-05---aws-cloud)
+* 04 - [Reflexion](#-06---reflexion)
+* 05 - [Fragen](Fragen.md)
+* 06 - [Quellenverzeichnis](#-08---quellenverzeichnis)
+* 07 - [Beispiele (für LB2)](#-09---beispiele-für-lb2)
+* 08 - [LB 2 hands-on](LB2.md)
+* 09 - [Mögliche Serverdienste für die Automatisierung](https://wiki.ubuntuusers.de/Serverdienste/)
 
 ___
-
-![](../images/Cloud_Computing_36x36.png "Cloud Computing") 01 - Cloud Computing
-======
-
-> [⇧ **Nach oben**](#inhaltsverzeichnis)
-
-[![](https://img.youtube.com/vi/36zducUX16w/0.jpg)](https://www.youtube.com/watch?v=36zducUX16w)
-
-Cloud Computing Services Models - IaaS PaaS SaaS Explained
-
----
-
-Unter **Cloud Computing** (Rechnerwolke) versteht man die Ausführung von Programmen, die nicht auf dem lokalen Rechner installiert sind, sondern auf einem anderen Rechner, der aus der Ferne (remote) aufgerufen wird.
-
-Technischer formuliert umschreibt das Cloud Computing den Ansatz, IT-Infrastrukturen (z.B. Rechenkapazität, Datenspeicher, Datensicherheit, Netzkapazitäten oder auch fertige Software) über ein Netz zur Verfügung zu stellen, ohne dass diese auf dem lokalen Rechner installiert sein müssen.
-
-Angebot und Nutzung dieser Dienstleistungen erfolgen dabei ausschliesslich über technische Schnittstellen und Protokolle sowie über Browser. Die Spannweite der im Rahmen des Cloud Computings angebotenen Dienstleistungen umfasst das gesamte Spektrum der Informationstechnik und beinhaltet unter anderem Infrastruktur, Plattformen und Software (IaaS, PaaS und SaaS).
-
-
-### Arten von Cloud Computing
-***
-
-**Infrastruktur – Infrastructure as a Service (IaaS)** <br>
-Die Infrastruktur (auch "Cloud Foundation") stellt die unterste Schicht im Cloud Computing dar. Der Benutzer greift hier auf bestehende Dienste innerhalb des Systems zu, verwaltet seine Recheninstanzen (virtuelle Maschinen) allerdings weitestgehend selbst. 
-
-**Plattform – Platform as a Service (PaaS)** <br>
-Der Entwickler erstellt die Anwendung und lädt diese in die Cloud. Diese kümmert sich dann selbst um die Aufteilung auf die eigentlichen Verarbeitungseinheiten. Im Unterschied zu IaaS hat der Benutzer hier keinen direkten Zugriff auf die Recheninstanzen. Er betreibt auch keine virtuellen Server.
-
-**Anwendung – Software as a Service (SaaS** <br>
-Die Anwendungssicht stellt die abstrakteste Sicht auf Cloud-Dienste dar. Hierbei bringt der Benutzer seine Applikation weder in die Cloud ein, noch muss er sich um Skalierbarkeit oder Datenhaltung kümmern. Er nutzt eine bestehende Applikation, die ihm die Cloud nach aussen hin anbietet.
-
-Mit dem Advent von Docker (Containierisierung) hat sich zwischen IaaS und PaaS eine neue Ebene geschoben: 
-
-**CaaS (Container as a Service)**<br>
-Diese Ebene ist dafür zuständig, containerisierten Workload auf den Ressourcen auszuführen, die eine IaaS-Cloud zur Verfügung stellt. Die Technologien dieser Ebene wie Docker, Kubernetes oder Mesos sind allesamt quelloffen verfügbar. Somit kann man sich seine private Cloud ohne Gefahr eines Vendor Lock-ins aufbauen.
-
-
-### Dynamic Infrastructure Platforms
-***
-
-[![](https://img.youtube.com/vi/KXkBZCe699A/0.jpg)](https://www.youtube.com/watch?v=KXkBZCe699A)
-
-Microsoft How does Microsoft Azure work
-
----
-
-Eine dynamische Infrastruktur-Plattform (Dynamic Infrastructure Platform) ist ein **System**, das Rechen-Ressourcen  virtualisiert und bereitstellt, insbesondere CPU (**compute**), Speicher (**storage**) und Netzwerke (**networks**). 
-Die Ressourcen werden programmgesteuert zugewiesen und verwaltet. Die Bereitstellung erfolgt mit virtuellen Maschinen (VM).
-
-Beispiele sind:
-*  Public Cloud
-    *  *AWS, Azure, Digital Ocean, Google, exoscale*
-*  Private Cloud 
-    *  *CloudStack, OpenStack, VMware vCloud*
-*  Lokale Virtualisierung 
-    *  *Oracle VirtualBox, Hyper-V, VMware Player*
-*  Hyperkonvergente Systeme 
-    *  *Rechner die die oben beschriebenen Eigenschaften in einer Hardware vereinen*
-
-**Anforderungen**
-Damit Infrastructure as Code (IaC) auf dynamischen Infrastruktur-Plattformen genutzt werden kann, müssen sie die folgenden Anforderungen erfüllen:
-* **Programmierbar**
-    * Ein Userinterface ist zwar angenehm und viele Cloud Anbieter haben ein solches, aber für IaC muss die Plattform via Programmierschnittstelle (API) ansprechbar sein.
-* **On-demand**
-    * Ressourcen (Server, Speicher, Netzwerke) schnell erstellen und vernichtet.
-* **Self-Service**
-    * Ressourcen anpassen und auf eigene Bedürfnisse zuschneiden.
-* **Portabel**
-    * Anbieter von Ressourcen (z.B. AWS, Azure) müssen austauschbar sein.
-* Sicherheit, Zertifizierungen (z.B. ISO 27001), etc.
-
-
-
-![](../images/Software-Konfiguration_36x36.png "Infrastructure as Code") 02 - Infrastructure as Code
-======
-
-> [⇧ **Nach oben**](#inhaltsverzeichnis)
-
-**Früher** <br>
-In der "Eisenzeit" der IT, waren die IT-Systeme physikalisch an Hardware gebunden. Die Bereitstellung und Aufrechterhaltung der Infrastruktur war manuelle Arbeit. Dabei wurde viel Arbeitszeit investiert, die Systeme bereitzustellen und am Laufen zu halten. Änderungen waren hingegen teuer aufwendig.
-
-**Heute** <br>
-Im heutigen "Cloud-Zeitalter" der IT, sind Systeme von der physikalischen Hardware entkoppelt, sie sind Virtualisiert.
-Bereitstellung und Wartung können an Software-Systeme delegiert werden und befreien die Menschen von Routinearbeiten.
-Änderungen können in Minuten, wenn nicht sogar in Sekunden vorgenommen werden. Das Management kann diese Geschwindigkeit, für einen schnelleren Marktzugang ausnutzen.
-
-
-### Definition
-***
-Infrastructure as Code (IaC) ist ein **Paradigma** (grundsätzliche Denkweise) zur Infrastruktur-Automation basierend auf Best Practices der Softwareentwicklung.
-
-Im Vordergrund von IaC stehen konsistente und wiederholbare Definitionen für die Bereitstellung von Systemen und deren Konfiguration. Die Definitionen werden in Dateien zusammengefasst, gründlich Überprüft und automatisch ausgerollt.
-
-Dabei kommen, von der Softwareentwicklung bekannte, Best Practices zum Einsatz:
-* Versionsverwaltung - Version Control Systems (VCS)
-* Testgetriebene Entwicklung - Testdriven Development (TDD)
-* Kontinuierliche Integration - Continuous Integration (CI)
-* Kontinuierliche Verteilung - Continuous Delivery (CD)
-
-
-### Ziele
-***
-Ziele von **Infrastructure as a Code** (IaC) sind:
-* IT-Infrastruktur wird unterstützt und ermöglicht Veränderung, anstatt Hindernis oder Einschränkung zu sein.
-* Änderungen am System sind Routine, ohne Drama oder Stress für Benutzer oder IT-Personal.
-* IT-Mitarbeiter verbringen ihre Zeit für wertvolle Dinge, die ihre Fähigkeiten fördern und nicht für sich wiederholende Aufgaben.
-* Fachanwender erstellen und verwalten ihre IT-Ressourcen, die sie benötigen, ohne IT-Mitarbeiter
-* Teams sind in der Lage, einfach und schnell, ein abgestürztes System wiederherzustellen.
-* Verbesserungen sind kontinuierlich und keine teuren und riskanten "Big Bang" Projekte.
-* Lösungen für Probleme sind durch Implementierung, Tests, und Messen institutionalisiert, statt diese in Sitzungen und Dokumente zu erörtern.
-
-
-### Tools
-***
-Folgende Arten von Tools werden für IaC benötigt:
-* **Infrastructure Definition Tools**
-    * Zur Bereitstellung und Konfiguration einer Sammlung von Ressourcen (z.B. OpenStack, TerraForm, CloudFormation)
-* **Server Configuration Tools**
-    * Zur Bereitstellung und Konfiguration von Servern bzw. VMs (z.B. Vagrant, Packer, Docker)
-* **Package Management Tools**
-    * Zur Bereitstellung und Verteilung von vorkonfigurierter Software, vergleichbar mit einem APP-Store. Bei Linux: APT, YUM, bei Windows: WiX, Plattformneutral: SBT native packager
-* **Scripting Tools**
-    * Kommandozeileninterpreter, kurz CLI (Command-Line Interpreter / Command-Line Shell), zur Schrittweisen Abarbeitung von Befehlen. Bei Linux, Mac und Windows 10: Bash, bei reinem Windows: PowerShell.
-* **Versionsverwaltung & Hubs**
-    * Zur Versionskontrolle der Definitionsdateien und als Ablage vorbereiteter Images. (z.B. GitHub, Vagrant Boxes, Docker Hub, Windows VM)
-
 
 ![](../images/Vagrant_36x36.png "Vagrant") 03 - Vagrant
 ======
@@ -237,10 +109,13 @@ Hinzufügen einer Box zur lokalen Registry:
 ```Shell
       vagrant box add [box-name]
 ```
+![vagrant-box-add](../20-Infrastruktur/screenshots/box-add.PNG)
+
 In der lokalen Registry vorhandene Boxen anzeigen:
 ```Shell
       vagrant box list
 ```
+![vagrant-box-list](../20-Infrastruktur/screenshots/vagrant-box-list.PNG)
 
 **VM erstellen** <br>
 Vagrantfile Erzeugen und Provisionierung starten:
@@ -250,13 +125,19 @@ Vagrantfile Erzeugen und Provisionierung starten:
       vagrant init ubuntu/xenial64
       vagrant up
 ```
+![vagrant-create-file](../20-Infrastruktur/screenshots/create-vagrant-file.PNG)
+![vagrant-up](../20-Infrastruktur/screenshots/vagrant-boot-vm.PNG)
+
 Aktueller Status der VM anzeigen:
 ```Shell
       vagrant status
 ```
+![vagrant-status](../20-Infrastruktur/screenshots/vagrant-up.PNG)
 
 **VM updaten** <br>
 Nach Änderungen im Vagrantfile kann ein Server wie folgt aktualisiert werden:
+
+![vagrant-file-changes](../20-Infrastruktur/screenshots/vagrantfile-changes.PNG)
 ```Shell
       vagrant provision
 ```
@@ -265,13 +146,13 @@ oder
       vagrant destroy -f
       vagrant up
 ```
+![vagrant-provision](../20-Infrastruktur/screenshots/vagrant-provisioning.PNG)
 
 **VM löschen** <br>
 Die VM kann wie folgt gelöscht werden:
 ```Shell
       7vagrant destroy -f
 ```
-
 
 ### Synced Folders (Gemeinsame Ordner)
 ***
@@ -367,14 +248,19 @@ Sind Bestandteile von Packer, die das Ergebnis eines Builders oder eines anderen
     
     /Users[Dein-Benutzername]/packer
 ```
+![packer-dir](../20-Infrastruktur/screenshots/packer-directory.PNG)
+
 4. Entpackte Datei `packer` in das erstelltes Verzeichnis kopieren
 ```Shell
     $ cp packer ~/packer
 ```
+![copy packer](../20-Infrastruktur/screenshots/cp%20packer.PNG)
+
 5. Pfad in der Path-Variable hinterlegen (damit das System das Command kennt):
 ```Shell
     $ export PATH="$PATH:/Users[Dein-Benutzername]/packer"
 ```
+![](../20-Infrastruktur/screenshots/export%20path.PNG)
 
 > #### Änderung und anzeigen der Umgebungsvariablen
 >
@@ -402,6 +288,8 @@ Sind Bestandteile von Packer, die das Ergebnis eines Builders oder eines anderen
         validate    check that a template is valid
         version     Prints the Packer version
 ```
+![](../20-Infrastruktur/screenshots/test%20packer%20functionality.PNG)
+
 7. Terminal (*Bash*) wieder schliessen & mit dieser Dokumentation fortfahren ...
    
 ### Image erstellen
