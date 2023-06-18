@@ -83,12 +83,23 @@ UFW steht für `Uncomplicated Firewall`. Ziel von UFW ist es, ein unkomplizierte
     $ curl -f 192.168.55.101
     $ curl -f 192.168.55.100:3306
 ```
+![curl-vm](../25-Sicherheit/screenshots/curl-vm.PNG)
+
+Hier sieht man, dass dieser Command uns ein HTML File ausgibt, was darauf hinweist, dass der apache Server läuft.
 
 **Löschen von Regeln**
 ```Shell
     $ sudo ufw status numbered
     $ sudo ufw delete 1
 ```
+![ufw-status-numbered](../25-Sicherheit/screenshots/ufw-status-numbered.PNG)
+
+![ufw-delete](../25-Sicherheit/screenshots/sudo-ufw-delete-3.PNG)
+
+Ich habe die Rule nachher per command line manuell wieder hinzugefügt:
+
+![ufw-add-rule](../25-Sicherheit/screenshots/add-rule.PNG)
+
 
 **Ausgehende Verbindungen** <br>
 Ausgehende Verbindungen werden standardmässig erlaubt.
@@ -100,6 +111,29 @@ Werden keine Ausgehenden Verbindungen benötigt oder nur bestimmte (z.B. ssh) k�
     $ sudo ufw allow out 22/tcp 
 ```
 
+**Automatisierung** <br>
+All das lässt sich zum Glück in das VagrantFile schreiben, wodurch man nicht alles manuell auf de VM machen kann, sondern dies direkt beim hochfahren bzw installieren der VM mit dem VagrantFile erledigt wird. Hier ist das VagrantFile, welches ich für diese VM verwendet habe:
+```Shell
+  Vagrant.configure("2") do |config|
+
+     config.vm.box = "ubuntu/xenial64"
+
+     config.vm.hostname = "firewall"
+
+     config.vm.network "forwarded_port", guest:80, host:8080, auto_correct: true
+
+     config.vm.provision "shell", inline: <<-SHELL
+        sudo apt-get update
+        sudo apt-get install -y apache2
+	    sudo apt-get install ufw
+	    sudo ufw allow 80/tcp
+	    sudo ufw allow from 192.168.1.117 to any port 22
+	    sudo ufw allow from 10.0.2.15 to any port 3306
+        sudo ufw allow ssh
+        sudo ufw --force enable	
+  SHELL
+end
+```
 
 ### Reverse Proxy
 ***
@@ -118,11 +152,38 @@ Anschliessend die Module in Apache aktivieren:
     $ sudo a2enmod proxy_html
     $ sudo a2enmod proxy_http 
 ```
+Diese beiden Schritte kann man zum Glück wieder per VagrantFile ausführen lassen:
+```Shell
+Vagrant.configure("2") do |config|
 
+    config.vm.box = "ubuntu/xenial64"
+
+    config.vm.hostname = "firewall"
+
+    config.vm.network "forwarded_port", guest:80, host:8080, auto_correct: true
+    
+    config.vm.provision "shell", inline: <<-SHELL
+        sudo apt-get update
+        sudo apt-get install -y apache2
+	    sudo apt-get install ufw
+	    sudo ufw allow 80/tcp
+	    sudo ufw allow from 192.168.1.117 to any port 22
+	    sudo ufw allow from 10.0.2.15 to any port 3306
+        sudo ufw allow ssh
+        sudo ufw --force enable
+        sudo apt-get install libapache2-mod-proxy-html
+	    sudo apt-get install libxml2-dev
+	    sudo a2enmod proxy
+	    sudo a2enmod proxy_html
+	    sudo a2enmod proxy_http
+  SHELL
+end
+```
 Die Datei /etc/apache2/apache2.conf wie folgt ergänzen:
 ```Shell
     ServerName localhost 
 ```
+![severname-localhost](../25-Sicherheit/screenshots/servername-localhost.PNG)
 
 Apache-Webserver neu starten:
 ```Shell
