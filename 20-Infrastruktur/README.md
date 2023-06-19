@@ -126,6 +126,7 @@ Vagrantfile Erzeugen und Provisionierung starten:
       vagrant up
 ```
 ![vagrant-create-file](../20-Infrastruktur/screenshots/create-vagrant-file.PNG)
+
 ![vagrant-up](../20-Infrastruktur/screenshots/vagrant-boot-vm.PNG)
 
 Aktueller Status der VM anzeigen:
@@ -167,7 +168,25 @@ Z.B. das HTML-Verzeichnis des Apache-Webservers mit dem Host-Verzeichnis synchro
 
 **Wichtig:** Standardmässig wird das aktuelle Vagrantfile-Verzeichnis in der VM unter /vagrant gemountet.
 
-Weiter geht es mit den [Beispielen](#-09---beispiele)
+### Mehrere VMs in einem VagrantFile
+***
+Man kann auch mehrere VMs in einem VagrantFile erstellen. 
+
+Solch ein File könnte dann wie folgt aussehen:
+```Shell
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/xenial64"
+
+  config.vm.define "client1" do |client1|
+    vm1.vm.network "private_network", ip: "10.0.120.10"
+
+  end
+
+  config.vm.define "client2" do |client2|
+    vm2.vm.network "private_network", ip: "10.0.120.20"
+  end
+end
+```
 
 ![](../images/Packer_36x36.png "Packer") 04 - Packer
 ======
@@ -290,313 +309,18 @@ Sind Bestandteile von Packer, die das Ergebnis eines Builders oder eines anderen
 ```
 ![](../20-Infrastruktur/screenshots/test%20packer%20functionality.PNG)
 
-7. Terminal (*Bash*) wieder schliessen & mit dieser Dokumentation fortfahren ...
-   
-### Image erstellen
-***
-
-Im nachfolgenden Abschnitt soll in Oracle VirtualBox ein Ubuntu Linux Image erstellt werden.
-
-Was wir dazu benötigen ist eine Packer Konfiguration in JSON-Format und eine ISO-Datei mit einem Ubuntu Image.
-
-Die Packer Konfigurationsdatei kann mit einem normalen Texteditor erzeugt werden und die ISO-Datei finden wir im Downloadbereich von ubuntu.com.
-
-**Post-processors** <br>
-Grob zusammengefasst holt Packer die ISO-Datei vom Internet erstellt einen leere VM mit angehängter ISO-Datei und versucht ohne Interaktion vom User ein Ubuntu Linux System zu installieren.
-
-Damit Ubuntu Linux ohne User-Interaktion installiert werden kann braucht es noch eine zusätzliche PreSeed Konfigurationsdatei. Diese gibt dem Installer Anweisungen wie er standardmässig Verfahren soll.
-
-```JSON
-    "builders": [
-        {
-        "type": "virtualbox-iso",
-    "boot_command": [
-        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ubuntu-preseed.cfg<wait>",
-    ],
-```
-
-Ein Beispiel:
-```Shell
-    debconf debconf/frontend select Noninteractive
-    choose-mirror-bin mirror/http/proxy string
-    d-i base-installer/kernel/override-image string linux-server
-    # Default user
-    d-i passwd/user-fullname string vagrant
-    d-i passwd/username string vagrant
-    d-i passwd/user-password password vagrant
-    d-i passwd/user-password-again password vagrant
-    d-i passwd/username string vagrant
-
-    # Minimum packages (see postinstall.sh)
-    d-i pkgsel/include string openssh-server
-    d-i pkgsel/install-language-support boolean false
-    d-i pkgsel/update-policy select none
-    d-i pkgsel/upgrade select none
-```
-
-**Provisioning** <br>
-Nach der Installation von Ubuntu Linux werden die Anweisungen in der provisioners Sektion ausgeführt. Hier eine Reihe von vorbereiteten Shell Scripts:
-```JSON
-    "provisioners": [
-        {
-        "type": "shell",
-        "execute_command": "echo 'vagrant'|sudo -S sh '{{.Path}}'",
-        "override": {
-            "virtualbox-iso": {
-            "scripts": [
-                "scripts/server/base.sh",
-```
-
-**Post-processors** <br>
-Nach Installation und Feintuning wird die Sektion `post-processor` abgearbeitet und ein aufbereitetes Images für den gewünschten Provider, hier Oracle VirtualBox erzeugt:
-```JSON
-    "post-processors": [
-        {
-        "type": "vagrant",
-        "override": {
-            "virtualbox": {
-            "output": "ubuntu-server-amd64-virtualbox.box"
-            }
-        }
-    }
-```
-
-
-### Sharing
-***
-Sobald eine Vagrant-Box gebaut wurde, ist die nächste Herausforderung diese Box mit anderen teilen.
-
-Bei der Freigabe von Vagrant-Boxen gibt es ein paar Dinge zu berücksichtigen:
-* Für wen ist die Box erstellt worden? 
-    * Für die Öffentlichkeit den Vertrieb, speziell für ein Entwicklungs-Team?
-* Wie gross ist die Box? 
-    * Die meisten öffentlichen Basis Boxen sind eher klein. Boxen für Entwicklungs-Teams können eine Vielzahl von Tools enthalten und recht gross wird (z.B. IoTKit ist Box 15 GB gross).
-* Beinhaltet die Box sensitive Daten wie z.B. Private Keys?
-
-Anstelle der Möglichkeit eine Box auf einem (lokalen) HTTP-Server zu speichern, gibt es auch die Möglichkeit diese beim Entwickler von Vagrant unter https://vagrantcloud.com/ zu speichern.
-
-**HTTP Server Variante** <br>
-Nachdem die Box mittels Packer erstellt wurde, wird sie z.B. via SCP (Secure Copy) auf einen HTTP-Server (z.B. lokaler Apache-Webserver) kopiert.
-
-Von dort kann sie dann mittels folgenden Einträgen im Vagrantfile angesprochen werden:
-```Ruby
-    Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-        config.vm.box = "ubuntu-server-amd64-virtualbox.box"
-        config.vm.box_url = "http://localhost:8080/ubuntu-server-amd64-virtualbox.box"
-    end
-```
-
-**Vagrant Boxes Dienst** <br>
-Hier ist das Vorgehen wie folgt:
-1. Account auf https://vagrantcloud.com/ erstellen
-2. `New Box` anwählen und Daten wie Name, Beschreibung etc. erfassen
-3. Nach Drücken von `Create Box` kann in einem zweiten Schritt die Release-Informationen angegeben werden
-4. Anschliessend mittels `Create Provider` die Zielplattform (z.B. VirtualBox) definieren.
-5. Nachdem die Box eingerichtet und hochgeladen wurde, kann sie mittels `unreleased Link` Releast werden.
-
-Nach dem Releasen der Box kann diese in beliebigen Vagrantfile(s) verwendet werden. Hier ein Beispiel:
-```Ruby
-    Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-        config.vm.box = "[yourname]/ubuntu-server-amd64-virtualbox.box"
-    end
-```
-
-### Alternative Boxen
-***
-
-**Vorgefertigte VMs bzw. Vagrant Boxen** <br>
-Microsoft stellt zu Testzwecken ihrer verschiedenen Browser (z.B. MS Edge) Versionen vorgefertigter Boxen mit Windows zur Verfügung.
-
-Diese sind via https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/ downloadbar.
-
-**Mittels VM Installation** <br>
-Für alle anderen Betriebssysteme ist die jeweilige ISO-Datei herunterzuladen, eine neue VM zu erstellen und als CD-ROM Laufwerk die ISO-Datei einzubinden. Anschliessend kann das entsprechende Betriebssystem normal installiert werden.
-
-Bei der Installation sind folgende Punkte zu berücksichtigen:
-* Der **Standard User** muss `vagrant` sein
-* Es muss zwingend ein SSH-Server installiert werden
-
-Diese Punkte können in Form von zwei Shell-Scripts (base.sh & vagrant.sh) abgedeckt werden, die in der erstellten VM auszuführen sind:
-
-*base.sh*
-```Shell
-    #!/bin/bash
-
-    set -o errexit
-
-    apt-get update
-    apt-get -y upgrade
-    apt-get -y install linux-headers-$(uname -r)
-
-    sed -i -e '/Defaults\s\+env_reset/a Defaults\texempt_group=sudo' /etc/sudoers
-    sed -i -e 's/%sudo  ALL=(ALL:ALL) ALL/%sudo  ALL=NOPASSWD:ALL/g' /etc/sudoers
-
-    echo "UseDNS no" >> /etc/ssh/sshd_config
-```
-
-*vagrant.sh*
-```Shell
-    #!/bin/bash
-
-    set -o errexit
-
-    # Set up Vagrant.
-
-    date > /etc/vagrant_box_build_time
-
-    # Create the user vagrant with password vagrant
-    useradd -G sudo -p $(perl -e'print crypt("vagrant", "vagrant")') -m -s /bin/bash -N vagrant || true
-
-    # Install vagrant keys
-    mkdir -pm 700 /home/vagrant/.ssh || true
-    curl -Lo /home/vagrant/.ssh/authorized_keys \
-    'https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub'
-    chmod 0600 /home/vagrant/.ssh/authorized_keys
-    chown -R vagrant:vagrant /home/vagrant/.ssh
-
-    # Install NFS client
-    #apt-get -y install nfs-common
-```
-
-Zum Schluss muss die VM nur noch in eine Vagrant-Box umgewandelt werden:
-```Shell
-    $ vagrant package --base my-virtual-machine
-```
-
-Um die Box lokal zu verwenden, wird der Befehl `vagrant box` verwendet:
-```Shell
-    $ vagrant box add package.box --name localhost/my-virtual-machine
-```
-
-
 
 ![](../images/AWS_36x36.png "AWS Cloud") 05 - AWS Cloud
 ======
+Bei der Installation von AWS Cloud hatte ich, wie andere auch Probleme. Das AWS Plugin scheint auf der aktuellen Windows Version nicht wirklich zu funktionieren. Laut Dokumentationen war eine ältere Version des Plugins mal mit Windows kompatibel, ist es jetzt aber nicht mehr.
 
-> [⇧ **Nach oben**](#inhaltsverzeichnis)
+![](../images/Vagrant_36x36.png "Netzplan") 06 - Netzplan
+======
 
-### Grundlagen
-***
-
-**Root Account** <br>
-Bezeichnet den Inhaber des AWS-Benutzerkontos. Für den Root sind alle Funktionen in der Cloud freigeschaltet, weshalb mit diesem Benutzer nicht direkt gearbeitet werden soll.
-
-**Regionen** <br>
-AWS hat unabhängige Rechenzentren in unterschiedlichen Regionen der Welt, z.B. Irland, Frankfurt, Virginia
-
-**IAM User** <br>
-Identity-Management (IAM) ist ein Verwaltungssystem, welches dem Root erlaubt, eigenständige User anzulegen und mit unterschiedlichen Rechten (Permissions & Policies) auszustatten. 
-
-**Network and Security** <br>
-Bei AWS gibt es eine Funktion in der EC2-Konsole, welche es erlaubt Security Groups, Key Pairs etc. zu verwalten.
-
-*Security Groups* legen fest welche Ports nach aussen offen sind und können für mehrere VMs gleichzeitig eingerichtet werden.
-
-*Key Pairs* sind Private & Public Keys. Wobei der Public Key bei Amazon verbleibt und der Private Key vom User lokal abgelegt wird um damit auf die VMs in der Cloud zugreifen zu können. 
-
-**AWS Images** <br>
-Es gibt vorbereitete VM-Images von AWS, welche einfach über die EC2-Konsole instanziert werden können.
+![Netzplan](../20-Infrastruktur/screenshots/netzwerkplan.PNG)
 
 
-### Vagrant & AWS
-***
-
-**Vorbereitungen** <br>
-1. Zuerst ist das AWS Vagrant Plugin zu installieren:
-```Shell
-    $ vagrant plugin install vagrant-aws
-```
-2. Anschliessend ein Dummy-Image downloaden:
-```Shell
-    $ vagrant box add dummy https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box
-```
-
-Das Dummy-Image wird als Stellvertreter für das effektive Image in der Amazon Cloud gebraucht.
-
-**AWS einrichten** <br>
-1. Als erstes ist unter https://aws.amazon.com/de/ ein Root Account einzurichten
-    * Dazu braucht es eine gültige Kreditkarte und eine direkte Telefonnummer! 
-2. IAM:
-    * Nun folgt das Einrichten des Vagrant-Users mit den Rechten, eine EC2 Instanz (AWS-Image) zu instanzieren
-    * Dazu ist auf `Identity and Access Management` zu wechseln
-    * Auf `Create New Users` zu klicken:
-        * **Enter User Names:** vagrant-user
-        * **Haken setzen bei:** [X] Generate an access for each user
-    * Zurück auf `User` und dem vagrant-user die `EC2FullAccess Policy` erteilen
-3. Network and Security:
-    * In der EC2 Konsole (wechseln mittels Quadrat links oben, EC2 Anwahl) eine neue Security Group einrichten und unter `Inbound` mindestens die Ports 22 und 80 für `Anywhere` freigeben
-    * Wechseln auf `Key Pair` und ein neues Key Paar anlegen. Der Private Key ist **sicher** lokal abzulegen!
-
-**AWS Images** <br>
-Nun kann das gewünschte AWS Image unter `Images - AMIs` gesucht werden, um anschliessend die AWI ID (z.B. ami-26c43149) zu notieren.
-
-Einfacher geht es auch mit `Instance - Launch Instance`.
-
-**Konfiguration** <br>
-Für die Konfiguration von Vagrant müssen folgende zwei Dateien in einem neuen Verzeichnis angelegt werden. Zusätzlich ist der Private Key (Key Pair) in dieses Verzeichnis zu kopieren.
-
-Die Einträge access_key, secret_key, ec2_keypair und security_group müssen entsprechend angepasst werden.
-
-config.rb
-```Ruby
-    $aws_options = {}
-    # Access und Secret Key vom User vagrant-user
-    $aws_options[:access_key] = ""
-    $aws_options[:secret_key] = ""
-    # Der Name des erstellten Key Pairs
-    $aws_options[:ec2_keypair] = "aws-frankfurt-linux.pem"
-    # Region Frankfurt 
-    $aws_options[:region] = "eu-central-1"
-    # Ubuntu 14.04 Images 
-    $aws_options[:ami_id] = "ami-26c43149"
-    $aws_options[:instance_type] = "t2.micro"
-    # Der Name der erstellten Security Group
-    $aws_options[:security_group] = "IoTKit Server"
-```
-
-Vagrant File
-```Ruby
-    # -*- mode: ruby -*-
-    # vi: set ft=ruby :
-    # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
-
-    VAGRANTFILE_API_VERSION = "2"
-    CONFIG = "#{File.dirname(__FILE__)}/config.rb"
-    if File.exist?(CONFIG)
-    require CONFIG
-    end
-    Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-    config.vm.define "web" do |web|
-        web.vm.box = "dummy"
-        web.vm.provider "aws" do |aws, override|
-        override.ssh.username = "ubuntu"
-        override.ssh.private_key_path = "#{File.dirname(__FILE__)}/aws-frankfurt-linux.pem"
-        aws.access_key_id = $aws_options[:access_key]
-        aws.secret_access_key = $aws_options[:secret_key]
-        aws.keypair_name = $aws_options[:ec2_keypair]
-        aws.region = $aws_options[:region]
-        aws.ami = $aws_options[:ami_id]
-        aws.instance_type = $aws_options[:instance_type]
-        aws.security_groups = $aws_options[:security_group]
-        aws.tags = {
-            'Name' => 'Vagrant Web Server',
-            }
-        end
-    end
-        config.vm.provision "shell", inline: <<-SHELL 
-        sudo apt-get update
-        sudo apt-get -y install apache2
-        SHELL
-    end
-```
-
-**Image erstellen** <br>
-Nachdem die Dateien config.rb und Vagrantfile erstellt wurden kann im erstellten Verzeichnis mittels folgendem Befehl die VM in der Cloud erzeugt werden:
-```Shell
-    $ vagrant up web --provider=aws
-```
-
-![](../images/Reflexion_36x36.png) 06 - Reflexion
+![](../images/Reflexion_36x36.png) 07 - Reflexion
 ======
 
 > [⇧ **Nach oben**](#inhaltsverzeichnis)

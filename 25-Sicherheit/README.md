@@ -204,7 +204,23 @@ Die Weiterleitungen sind z.B. in `sites-enabled/001-reverseproxy.conf` eingetrag
     ProxyPass /master http://master
     ProxyPassReverse /master http://master
 ```
-Man kann auch den 
+Wenn wir nun in sites-enabled/001-reverseproxy.conf die Pfade einfügen, die wir für den reverse Proxy wollen, können wir mit den richtigen Einstellungen im Vagrant File erfolgreich die Verbindung herstellen.
+
+So ein Vagrant file könnte wiefolgt aussehen:
+```Shell
+config.vm.define :web do |web|
+      web.vm.box = "ubuntu/xenial64"
+      web.vm.network :private_network, ip: "10.0.0.5"
+      web.vm.hostname = "web"
+      web.vm.network "forwarded_port", guest:80, host:8090, auto_correct: true
+      web.vm.synced_folder "html/", "/var/www/html"
+      web.vm.provision "shell", inline: <<-SHELL
+      sudo apt-get update
+      sudo apt-get -y install apache2 
+      SHELL
+  end
+Reverse-Proxy
+```
 
 ![](../images/Benutzer-_und_Rechteverwaltung_36x36.png "Benutzer- & Rechteverwaltung") 02 - Benutzer- & Rechteverwaltung
 ======
@@ -671,7 +687,7 @@ Wem die Authentifizierung über Passwörter trotz der Verschlüsselung zu unsich
 
 
 
-![](../images/Reflexion_36x36.png "Reflexion") 06 - Reflexion
+![](../images/Reflexion_36x36.png "Reflexion") 06 - Reflexion LB2
 ======
 
 > [⇧ **Nach oben**](#inhaltsverzeichnis)
@@ -682,7 +698,7 @@ Ich habe bis jetzt sehr, sehr viel gelernt, da ich vorher noch nie mit Virtualbo
 
 **Negativ** <br>
 
-Ich bin mir sicher, dass das Konzept, dass wir das machen können, was wir wollen in diesem Projekt, einen guten Hintergrund hat. Jedoch fand ich mich selber darin ein bisschen verloren. Also für mich war es wie lange nicht klar, was ich denn genau machen kann bzw will. Dies war ein wenig schade, da ich mir das einfach nicht gewohnt war und so am Anfang auch nicht schnell arbeiten konnte. 
+Ich bin mir sicher, dass das Konzept, dass wir das machen können, was wir wollen in diesem Projekt, einen guten Hintergrund hat. Jedoch fand ich mich selber darin ein bisschen verloren. Also für mich war es wie lange nicht klar, was ich denn genau machen kann bzw will. Dies war ein wenig schade, da ich mir das einfach nicht gewohnt war und so am Anfang auch nicht schnell arbeiten konnte. Leider konnte ich auch nicht alle Aufgaben machen. AWS Cloud hat bei mir nicht funktioniert und leider hatte ich selber für LDAP nicht genügend Zeit. Allerdings wäre dies definitiv möglich gewesen, es hätte einfach noch mehr Zeitaufwand benötigt.
 
 
 ![](../images/Reflexion_36x36.png "Lerneffekt") 07 - Lerneffekt
