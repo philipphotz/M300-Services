@@ -262,7 +262,7 @@ Nutzen Sie Wartezeiten produktiv, zum Beispiel um Ihre Lernumgebung einzurichten
 
 Falls Linux nicht bootet: In den *Settings* der virtuellen Maschine unter *Speicher* überprüfen, ob die virt. HD am IDE-Controller angeschlossen ist. 
 
-![VM-Erstellung](../10-Toolumgebung/screenshots/vm_erstellen_allgemein.PNG
+![VM-Erstellung](../10-Toolumgebung/screenshots/vm_erstellen_allgemein.PNG)
 
 
 ### VM einrichten
