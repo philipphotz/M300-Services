@@ -341,6 +341,22 @@ Folgende Befehle dienen zum ändern der Rechte:
 | `chgrp`       | Dient zum Ändern der Gruppe einer Datei              |
 
 
+### Erstellung zweier User mittels Vagrantfile <br>
+***
+```Shell
+    # Erstelle Administrator-Benutzer
+    sudo useradd -m -s /bin/bash -G sudo adm_philipp
+    echo 'adm_philipp:m300admin' | sudo chpasswd
+
+    # Erstelle normalen Benutzer
+    sudo useradd -m -s /bin/bash philipp
+    echo 'philipp:m300user' | sudo chpasswd
+```
+![admin-philipp](../25-Sicherheit/screenshots/adm_philipp.PNG)
+
+![user-philipp](../25-Sicherheit/screenshots/user-philipp.PNG)
+
+
 ![](../images/SSH_36x36.png "SSH") 03 - SSH
 ======
 

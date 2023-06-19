@@ -410,9 +410,26 @@ Nachfolgend wird die VM mit einem bereits abgeänderten File bzw. VM aus dem M30
 7. Vagrant ist nun komplett einsatzfähig!
 
 Ich wollte noch ein bisschen mit Vagrant und Apache rumspielen, daher habe ich ein VagrantFile erstellt, welches einen Apache-Server hochstartet, welcher auf der Seite Hello World ausgibt:
+```Shell
+Vagrant.configure("2") do |config|
+    config.vm.box = "ubuntu/xenial64"
+  
+    config.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
+  
+    config.vm.hostname = "web"
+  
+    config.vm.provision "shell", inline: <<-SHELL
+      sudo apt-get update
+      sudo apt-get install -y apache2
+      echo "Hello World" | sudo tee /var/www/html/index.html
+      sudo ufw allow ssh
+      sudo ufw allow 80/tcp
+      sudo ufw --force enable
+    SHELL
+  end
+```
 
-![apache2](../screenshots/apache2.PNG)
-
+![apache-hello-world](../screenshots/apache-hello-world.PNG)
 
 
 ![](../images/VisualStudioCode_36x36.png "Visual Studio Code") 05 - Visual Studio Code
