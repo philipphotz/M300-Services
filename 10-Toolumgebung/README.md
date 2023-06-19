@@ -24,7 +24,7 @@ Folgende Arbeiten müssen gemacht werden:
 ***
 1. Auf www.github.com ein Benutzerkonto erstellen (Angabe von Username, E-Mail und Passwort)
 2. E-Mail zur Verifizierung des Kontos bestätigen und anschliessend auf GitHub anmelden
-![github-account](../screenshots/github-account.PNG)
+![github-account](../10-Toolumgebung/screenshots/github-account.PNG)
 
 
 ### Repository erstellen
@@ -36,7 +36,7 @@ Folgende Arbeiten müssen gemacht werden:
 5. Radio-Button bei <strong>Public</strong> belassen
 6. Haken bei <strong>Initialize this repository with a README</strong> setzen
 7. Auf <strong>Create repository</strong> klicken
-![git-repo](../screenshots/git-repo.PNG)
+![git-repo](../10-Toolumgebung/screenshots/git-repo.PNG)
 
 
 ### SSH-Key erstellen (lokal)
@@ -79,7 +79,7 @@ Datei %HOME%/.ssh/id_rsa.pub oder $HOME/.ssh/id_rsa.pub in Zwischenablage kopier
 5.  Im Formular unter <strong>Title</strong> eine Bezeichnung vergeben (z.B. MB SSH-Key)
 6.  Den zuvor kopierten Key mit <i>CTRL + V</i> einfügen und auf <strong>Add SSH key</strong> klicken
 7.  Der Schlüssel (SSH-Key) sollte nun in der übergeordneten Liste auftauchen
-![ssh-key](../screenshots/ssh-key.PNG)
+![ssh-key](../10-Toolumgebung/screenshots/ssh-key.PNG)
 
 > Weiter Infos zu SSH-Keys in Zusammenhang mit GitHub und dem SSH-Agent findet man unter:
 
@@ -115,9 +115,9 @@ Hierzu müssen folgende Schritte durchgeführt werden:
     ``` 
 3. Konfiguration abgeschlossen
 
-![global-user-name](../screenshots/git-global-user-name.PNG)
+![global-user-name](../10-Toolumgebung/screenshots/git-global-user-name.PNG)
 
-![global-user-email](../screenshots/git-global-email.PNG)
+![global-user-email](../10-Toolumgebung/screenshots/git-global-email.PNG)
 
 ### Repository klonen
 ***
@@ -127,7 +127,7 @@ Hierzu müssen folgende Schritte durchgeführt werden:
     ```Shell
       $ git clone https://gitlab.com/ch-tbz-it/Stud/m300/
     ``` 
-![git-repo-clone](../screenshots/git-repo-klonen.PNG)
+![git-repo-clone](../10-Toolumgebung/screenshots/git-repo-klonen.PNG)
 
 4. In das M300-Verzeichnis wechseln:
     ```Shell
@@ -160,7 +160,7 @@ Hierzu müssen folgende Schritte durchgeführt werden:
 
       Cloning into 'my_M300'...
     ``` 
-![git-clone](../screenshots/git-repo-klonen.PNG)
+![git-clone](../10-Toolumgebung/screenshots/git-repo-klonen.PNG
 
 4. Repository aktualisieren und Status anzeigen:
     ```Shell
@@ -168,7 +168,7 @@ Hierzu müssen folgende Schritte durchgeführt werden:
 
       Already up to date.
     ```
-![git-pull](../screenshots/git-pull.PNG)
+![git-pull](../10-Toolumgebung/screenshots/git-pull.PNG)
 
 ### Repository hochladen (Push)
 ***
@@ -189,7 +189,7 @@ Hierzu müssen folgende Schritte durchgeführt werden:
     ```Shell
       $ git push
     ```
-![git-push](../screenshots/git-push.PNG)
+![git-push](../10-Toolumgebung/screenshots/git-push.PNG)
 
 6.  Nun sollte der Master-Branch des Repositorys ebenfalls aktualisiert sein
 
@@ -262,9 +262,8 @@ Nutzen Sie Wartezeiten produktiv, zum Beispiel um Ihre Lernumgebung einzurichten
 
 Falls Linux nicht bootet: In den *Settings* der virtuellen Maschine unter *Speicher* überprüfen, ob die virt. HD am IDE-Controller angeschlossen ist. 
 
-![VM-Erstellung](../screenshots/vm_erstellen_allgemein.PNG)
+![VM-Erstellung](../10-Toolumgebung/screenshots/vm_erstellen_allgemein.PNG
 
-![](../screenshots/vm_erstellen_system.PNG)
 
 ### VM einrichten
 ***
@@ -290,12 +289,12 @@ Die virtuelle Maschine (VM) sollte nun soweit betriebsbereit sein, sprich der Zu
    ```Shell 
    $  sudo reboot
    ```
-![synaptic](../screenshots/synaptic.PNG)
+![synaptic](../10-Toolumgebung/screenshots/synaptic.PNG)
 
 8. Gängiger Web-Browser (z.B. Firefox) starten und prüfen, ob der Standard-Content des Webservers unter "http://127.0.0.01:80" (localhost) erreichbar ist
 9. Browser-Fenster schliessen und VM wieder herunterfahren/stoppen
     
-![ubuntu-apache-server](../screenshots/apache-works.PNG)
+![ubuntu-apache-server](../10-Toolumgebung/screenshots/apache-works.PNG)
 
 10. Mit dem Kapitel 4 (Vagrant) fortfahren
 
@@ -335,7 +334,7 @@ Nachfolgend sind einzelne Schritte zur Einrichtung von Vagrant dokumentiert:
       $ vagrant init ubuntu/xenial64        #Vagrantfile erzeugen
       $ vagrant up --provider virtualbox    #Virtuelle Maschine erstellen & starten
     ``` 
-    ![vagrant-vm](../screenshots/vagrant_VM.PNG)
+    ![vagrant-vm](../10-Toolumgebung/screenshots/vagrant_VM.PNG)
 
 4. Die VM ist nun in Betrieb (erscheint auch in der Übersicht innerhalb von VirtualBox) und kann via SSH-Zugriff bedient werden:
     ```Shell
@@ -348,7 +347,7 @@ Nachfolgend sind einzelne Schritte zur Einrichtung von Vagrant dokumentiert:
       $ df -h       #Freier Festplattenspeicher
       $ free -m     #Freier Arbeitsspeicher
     ``` 
-    ![vagrant-ssh](../screenshots/vagrant_ssh_connection.PNG)
+    ![vagrant-ssh](../10-Toolumgebung/screenshots/vagrant_ssh_connection.PNG)
 
 5. VM über VirtualBox-GUI ausschalten
 
@@ -388,7 +387,7 @@ Schlussfolgerung: Keine erheblichen Unterschiede zum ersten Teil (ohne Share) un
 ***
 Um den Automatisierungsgrad von Vagrant im Rahmen dieser Dokumentation etwas besser hervorzuheben, richten wir eine VM, dass sie direkt mit einem vorinstallierten Apache-Webserver startet. Dazu können wir im Vagrantfile den Code etwas leicht abändern und direkt auf Bash-Ebene mit einfachen Befehlen arbeiten. 
 
-![vagrant-apache-code](../screenshots/VagrantFile_apache.PNG)
+![vagrant-apache-code](../10-Toolumgebung/screenshots/VagrantFile_apache.PNG)
 
 Nachfolgend wird die VM mit einem bereits abgeänderten File bzw. VM aus dem M300-Repository erstellt:
 
@@ -409,7 +408,7 @@ Nachfolgend wird die VM mit einem bereits abgeänderten File bzw. VM aus dem M30
     ```
 7. Vagrant ist nun komplett einsatzfähig!
 
-Ich wollte noch ein bisschen mit Vagrant und Apache rumspielen, daher habe ich ein VagrantFile erstellt, welches einen Apache-Server hochstartet, welcher auf der Seite Hello World ausgibt:
+Ich wollte noch ein bisschen mit Vagrant und Apache rumspielen, daher habe ich ein VagrantFile erstellt, welches einen Apache-Server hochstartet, welcher auf der Seite Hello World ausgibt. Da musste ich selber noch bei der VM die Firewall installieren und Rules setzen, weil ich sonst nicht verbinden konnte. Ich habe verschiedenes versucht und das hat am Schluss funktioniert.
 ```Shell
 Vagrant.configure("2") do |config|
     config.vm.box = "ubuntu/xenial64"
@@ -429,7 +428,7 @@ Vagrant.configure("2") do |config|
   end
 ```
 
-![apache-hello-world](../screenshots/apache-hello-world.PNG)
+![apache-hello-world](../10-Toolumgebung/screenshots/apache-hello-world.PNG)
 
 
 ![](../images/VisualStudioCode_36x36.png "Visual Studio Code") 05 - Visual Studio Code
@@ -467,9 +466,9 @@ Dazu müssen folgende Anweisungen befolgt werden:
 3. Auf `Install` klicken und anschliessend auf `Reload`, um die Extension in den Arbeitsbereich zu laden.
 4. Nun können die Extensions angewendet werden. Für Markdown ist [diese Liste](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet/"github.com") sehr hilfreich.
 
-![Visual-Studio-Code-Extensions-1](../screenshots/vsc_extensions_1.PNG)
+![Visual-Studio-Code-Extensions-1](../10-Toolumgebung/screenshots/vsc_extensions_1.PNG)
 
-![Visual-Studio-Code-Extensions-2](../screenshots/vsc_extensions_2.PNG)
+![Visual-Studio-Code-Extensions-2](../10-Toolumgebung/screenshots/vsc_extensions_2.PNG)
 
 
 ### Einstellungen anpassen
@@ -495,7 +494,7 @@ Damit keine Dateien der virtuellen Maschinen dem Cloud-Repository hinzugefügt w
         "**/.DS_Store": true
       },
     ```
-![Dateitypen-Exkludieren](../screenshots/files-exkludieren.PNG)
+![Dateitypen-Exkludieren](../10-Toolumgebung/screenshots/files-exkludieren.PNG)
 
 5. Änderungen speichern und die Einstellungen schliessen
    
@@ -511,4 +510,4 @@ Nun sollten keine Dateien mit den Endungen .git / .svn / .hg / .vagrant / .DS_st
 6. Bei den 3 Punkten (...) die Funktion **Push** aufrufen
 7. Warten, bis Dateien vollständig gepusht wurden
 
-![repo-in-vsc](../screenshots/repo-in-vsc.PNG)
+![repo-in-vsc](../10-Toolumgebung/screenshots/repo-in-vsc.PNG)
