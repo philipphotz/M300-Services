@@ -343,7 +343,59 @@ Funktionsfähigkeit überprüfen:
 * `WORKDIR` 
     * Setzt das Arbeitsverzeichnis für alle folgenden RUN-, CMD-, ENTRYPOINT-, ADD oder COPY-Anweisungen.
 
+**Apache Webserver** <br>
 
+Ich habe mir gedacht, es wäre eine gute Idee mal einen Container zu erstellen, welcher als Apache Webserver fungiert. Dies habe ich hier gemacht.
+
+Als erstes habe ich das Dockerfile erstellt. Anbei sehen sie den Code:
+
+```Shell
+# Basisimage auswählen
+FROM ubuntu:latest
+
+# Arbeitsverzeichnis erstellen
+WORKDIR /app
+
+# Apache Webserver und curl installieren
+RUN apt-get update && \
+    apt-get install -y apache2 curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Konfigurationsdatei des Apache-Servers aktualisieren
+COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
+
+# Index.html File hinzufügen
+COPY ./index.html /var/www/html/
+
+# Exponiere Port 8081
+EXPOSE 8081
+
+# Startbefehl definieren
+CMD ["apachectl", "-D", "FOREGROUND"]
+```
+
+Danach habe ich das apache.conf file erstellt. Auch hier habe ich Ihnen den Code zur Verfügung gestellt:
+```Shell
+<VirtualHost *:80>
+    ServerName localhost
+    DocumentRoot /var/www/html
+
+    <Directory /var/www/html>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+```
+
+Danach habe ich noch ein index.html file erstellt, welches als Start-Seite ein "Hello World" ausgibt.
+Danach habe ich das image gebuildet und den Container gestartet. Hier sehen sie den Vorgang und die Webseite:
+
+![docker-run-1](../30-Container/Apache-Webserver/screenshots/docker-run-1.PNG)
+
+![docker-run-2](../30-Container/Apache-Webserver/screenshots/docker-run-2.PNG)
+
+![apache-webserver](../30-Container/Apache-Webserver/screenshots/apache-webserver.PNG)
 
 ![](../images/Network_36x36.png?raw=true "Netzwerk-Anbindung") 03 - Netzwerk-Anbindung
 ======
