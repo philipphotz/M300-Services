@@ -397,6 +397,14 @@ Danach habe ich das image gebuildet und den Container gestartet. Hier sehen sie 
 
 ![apache-webserver](../30-Container/Apache-Webserver/screenshots/apache-webserver.PNG)
 
+**Testfälle** <br>
+| Nr | Testfall | Soll-Ergebnis | Ist-Ergebnis | Abnahme |
+|----|----------|---------------|--------------|---------|
+| 1  | Funktionalität | Website ist unter http://localhost:8080 erreichbar | Website ist erreichbar | Ja |
+| 2  | Funktionalität | "Hello World" wird auf der Seite angezeigt | "Hello World" wird angezeigt | Ja |
+
+Hier gab es nicht wirklich viel zu testen. Ich konnte auf die Webseite zugreifen und mir wurde das angezeigt, was ich wollte. 
+
 **HTTP zu HTTPS** <br>
 
 Ich wollte ebenfalls noch schauen, wie man den Apache so konfigurieren kann, dass der Server HTTPS, anstatt HTTP verwendet.
@@ -470,6 +478,17 @@ Container starten:
 Web-Seite:
 
 ![](../30-Container/Apache%20mit%20HTTPS/screenshots/webpage.PNG)
+
+**Testfälle** <br>
+
+| Nr | Testfall | Soll-Ergebnis | Ist-Ergebnis | Abnahme |
+|----|----------|---------------|--------------|---------|
+| 1  | Funktionalität | Website ist unter http://localhost erreichbar | Website ist erreichbar | Ja |
+| 2  | Funktionalität | Auftauchen eines Anmeldefensters | Kein Anmeldefenster erscheint | Ja |
+| 3  | Funktionalität | Benutzername und Passwort können erfolgreich eingegeben werden | Kein Anmeldefenster, daher nicht prüfbar | Nein |
+
+Die HTTPS Verbindung hat Funktioniert. Wenn ich http://localhost eingebe, dann werde ich auf https://localhost weitergeleitet. Jedoch erscheint kein Login-Fenster und ich weiss nicht, was das Problem ist. Ich habe alles mehrfach geprüft und alles auch ein zweites Mal gemacht. Leider ist das Login-Fenster aufgetaucht. Dies ist sehr schade.
+
 
 ![](../images/Network_36x36.png?raw=true "Netzwerk-Anbindung") 03 - Netzwerk-Anbindung
 ======
@@ -660,6 +679,12 @@ Login auf MySQL Service:
 
 ![](../30-Container/MySQL/screenshots/mysql-login.PNG)
 
+**Testfälle** <br>
+| Nr | Testfall | Soll-Ergebnis | Ist-Ergebnis | Abnahme|
+|----|----------|---------------|--------------|--------|
+| 1  | Funktionalität | Passwort-Eingabe funktioniert | Passwort-Eingabe funktioniert | Ja |
+| 2  | Funktionalität | Verbindung zu MySQL per CLI funktioniert | Verbindung zu MySQL per CLI funktioniert | Ja |
+
 
 ![](../images/Volume_36x36.png?raw=true "Volumes") 04 - Volumes
 ======
@@ -839,6 +864,14 @@ Kontrolle:
 Im ersten Command haben wir die Datei "testfile" erstellt, welche den Inhalt "Test" hat.
 
 Im zweiten Command haben wir diesen Inhalt ausgegeben.
+
+**Testfälle** <br>
+
+| Nr | Testfall | Soll-Ergebnis| Ist-Ergebnis | Abnahme |
+|----|----------------|------------------------------|-------------------------------------|----|
+| 1  | Funktionalität | Image und Container erstellt | Image und Container wurden erstellt | Ja |
+| 2  | Funktionalität | Datei wurde im Volume erstellt | Datei wurde im Volume erstellt | Ja |
+
 
 ![](../images/Share_36x36.png "Image-Bereitstellung") 05 - Image-Bereitstellung
 ======
