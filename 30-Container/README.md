@@ -350,7 +350,7 @@ Ich habe mir gedacht, es wäre eine gute Idee mal einen Container zu erstellen, 
 Als erstes habe ich das Dockerfile erstellt. Anbei sehen sie den Code:
 
 ```Shell
-# Basisimage auswählen
+# Basisimage
 FROM ubuntu:latest
 
 # Arbeitsverzeichnis erstellen
@@ -364,10 +364,10 @@ RUN apt-get update && \
 # Konfigurationsdatei des Apache-Servers aktualisieren
 COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
 
-# Index.html File hinzufügen
+# index.html File hinzufügen
 COPY ./index.html /var/www/html/
 
-# Exponiere Port 8081
+# Port 8081 öffnen
 EXPOSE 8081
 
 # Startbefehl definieren
@@ -396,6 +396,80 @@ Danach habe ich das image gebuildet und den Container gestartet. Hier sehen sie 
 ![docker-run-2](../30-Container/Apache-Webserver/screenshots/docker-run-2.PNG)
 
 ![apache-webserver](../30-Container/Apache-Webserver/screenshots/apache-webserver.PNG)
+
+**HTTP zu HTTPS** <br>
+
+Ich wollte ebenfalls noch schauen, wie man den Apache so konfigurieren kann, dass der Server HTTPS, anstatt HTTP verwendet.
+Dies habe ich anschliessend auch getan. Hier sehen Sie den Ablauf:
+
+Dockerfile:
+```Shell
+# Basisimage
+FROM ubuntu:latest
+
+# Maintainer
+LABEL maintainer="Apache"
+
+# Aktualisiere das System und installiere Apache, SSL-Zertifikate und apache2-utils
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y apache2 && \
+    apt-get install -y ssl-cert && \
+    apt-get install -y apache2-utils
+
+# Aktivierung der nötigen Apache Ressourcen
+RUN a2enmod ssl && \
+    a2enmod rewrite && \
+    a2enmod headers && \
+    a2ensite default-ssl
+
+# Portforwarding von 80 auf 443
+RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/000-default.conf && \
+    echo '   ServerName localhost' >> /etc/apache2/sites-available/000-default.conf && \
+    echo '   Redirect permanent / https://localhost/' >> /etc/apache2/sites-available/000-default.conf && \
+    echo '</VirtualHost>' >> /etc/apache2/sites-available/000-default.conf
+
+# Parameter für die SSL Konfiguration
+RUN echo '<Directory /var/www/html>' >> /etc/apache2/sites-available/default-ssl.conf && \
+    echo '   AuthType Basic' >> /etc/apache2/sites-available/default-ssl.conf && \
+    echo '   AuthName "Restricted Content"' >> /etc/apache2/sites-available/default-ssl.conf && \
+    echo '   AuthUserFile /etc/apache2/.htpasswd' >> /etc/apache2/sites-available/default-ssl.conf && \
+    echo '   Require valid-user' >> /etc/apache2/sites-available/default-ssl.conf && \
+    echo '</Directory>' >> /etc/apache2/sites-available/default-ssl.conf
+
+# Umgebungsvariabeln für Apache
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
+ENV APACHE_PID_FILE /var/run/apache2.pid
+ENV APACHE_RUN_DIR /var/run/apache2
+ENV APACHE_LOCK_DIR /var/lock/apache2
+ENV APACHE_LOG_LEVEL warn
+
+# Erstelle notwendige Verzeichnisse
+RUN mkdir -p $APACHE_RUN_DIR $APACHE_LOCK_DIR $APACHE_LOG_DIR
+
+# Erstelle die .htpasswd-Datei mit Benutzername "m300" und Passwort "m300"
+RUN htpasswd -bc /etc/apache2/.htpasswd Docker Docker
+
+# Port 80 und 443 öffnen
+EXPOSE 80 443
+
+# Starte den Apache-Server im Vordergrund
+CMD ["/usr/sbin/apache2", "-DFOREGROUND"]
+```
+
+Image builden:
+
+![](../30-Container/Apache%20mit%20HTTPS/screenshots/image.PNG)
+
+Container starten:
+
+![](../30-Container/Apache%20mit%20HTTPS/screenshots/run.PNG)
+
+Web-Seite:
+
+![](../30-Container/Apache%20mit%20HTTPS/screenshots/webpage.PNG)
 
 ![](../images/Network_36x36.png?raw=true "Netzwerk-Anbindung") 03 - Netzwerk-Anbindung
 ======
@@ -546,6 +620,45 @@ MySQL Client starten (auf Ubuntu):
     $  mysql -u root -p admin -h ${MYSQL_PORT_3306_TCP_ADDR}
 ```
 
+**MySQL Server** <br>
+Des Weiteren wollte ich noch schauen, ob ich einen Container mit MySQL erstellen kann, auf welchen ich dann per CLI connecten kann. Hier finden Sie meine Schritte:
+
+Dockerfile:
+```Shell
+# Basisimage
+FROM mysql:latest
+
+# Root Passwort
+ENV MYSQL_ROOT_PASSWORD modul300lb33
+
+# Datenbank erstellen
+ENV MYSQL_DATABASE mydatabase
+
+# Neuer User und Passwort
+ENV MYSQL_USER user
+ENV MYSQL_PASSWORD modul300lb3
+
+# Port 3306 öffnen
+EXPOSE 3306
+
+# MySQL bei Container Boot starten
+CMD ["mysqld"]
+```
+Image Build:
+
+![](../30-Container/MySQL/screenshots/image.PNG)
+
+Container starten:
+
+![](../30-Container/MySQL/screenshots/container.PNG)
+
+Container in Docker Desktop:
+
+![](../30-Container/MySQL/screenshots/container-docker.PNG)
+
+Login auf MySQL Service:
+
+![](../30-Container/MySQL/screenshots/mysql-login.PNG)
 
 
 ![](../images/Volume_36x36.png?raw=true "Volumes") 04 - Volumes
@@ -682,7 +795,50 @@ Die Abhängigkeit Volume Verzeichnis kann auch im Dockerfile hinterlegt werden:
     VOLUME mysql:/var/lib/mysql
 ```
 
+Zum Ausprobieren der verschiedenen Commands hier habe ich nochmals einen MySQL Container erstellt, welcher ein Volume hat. 
+Hier sehen Sie die Schritte, welche ich unternommen habe:
 
+Dockerfile:
+
+```Shell
+# Basisimage
+FROM mysql:latest
+
+# Root Passwort
+ENV MYSQL_ROOT_PASSWORD modul300lb3
+
+# Datenbank erstellen
+ENV MYSQL_DATABASE mydatabase
+
+# Neuer User und Passwort
+ENV MYSQL_USER user
+ENV MYSQL_PASSWORD modul300lb3
+
+# Named Volume für MySQL
+VOLUME /var/lib/mysql
+
+# Port 3306 öffnen
+EXPOSE 3306
+
+# MySQL bei Container Boot starten
+CMD ["mysqld"]
+```
+
+Image builden:
+
+![](../30-Container/MySQL/screenshots/image_mit_volumes.PNG)
+
+Container starten:
+
+![](../30-Container/MySQL/screenshots/container_mit_volumes.PNG)
+
+Kontrolle:
+
+![](../30-Container/MySQL/screenshots/test.PNG)
+
+Im ersten Command haben wir die Datei "testfile" erstellt, welche den Inhalt "Test" hat.
+
+Im zweiten Command haben wir diesen Inhalt ausgegeben.
 
 ![](../images/Share_36x36.png "Image-Bereitstellung") 05 - Image-Bereitstellung
 ======
