@@ -17,12 +17,6 @@ Sie können Applikationen und Services als Container betrieben und als Container
 * 02 - [Docker](#-02---docker)
 * 03 - [Netzwerk-Anbindung (optional)](#-03---netzwerk-anbindung)
 * 04 - [Volumes (optional)](#-04---volumes)
-* 05 - [Image-Bereitstellung](#-05---image-bereitstellung)
-* 06 - [Reflexion](#-06---reflexion)
-* 07 - [Fragen](Fragen.md)
-* 08 - [LB 3 hands-on](LB3.md)
-* 09 - [Beispiele (für LB3)](#-09---beispiele-für-lb3)
-* 10 - [Quellenverzeichnis](#-10---quellenverzeichnis)
 
 ___
 
@@ -1033,40 +1027,3 @@ Anschliessend können die vorhanden Images von unserer lokalen Docker Registry g
 ```
 
 **Wichtig:** `{{config.docker}}` durch installierten Server ersetzen.
-
-![](../images/Reflexion_36x36.png "Fazit / Reflexion") 06 - Reflexion
-======
-
-> [⇧ **Nach oben**](#inhaltsverzeichnis)
-
-![](../images/Samples_36x36.png "Docker") 09 - Beispiele (für LB3)
-======
-
-> [⇧ **Nach oben**](#inhaltsverzeichnis)
-
-1.  Terminal (*Bash*) öffnen
-2.  [VM (beinhaltet Docker)](../docker/) erstellen und darin wechseln
-
-```Shell
-    cd M300/docker
-    vagrant up
-    vagrant ssh
-```
-
-3.  In der VM ins Verzeichnis `/vagrant<Beispiel>` wechseln und `README.md` studieren, z.B. mittels `less README.md`.
-
-Es stehen folgende Beispiele zur Verfügung:
-
-* [apache - Apache Web Server](../docker/apache/)
-* [mysql - MySQL Datenbank](../docker/mysql/)
-* [apache4X - Scriptscript welches 4 Web Server Container erstellt](../docker/apache4X/)
-* [compose - Docker Compose](../docker/compose/)
-* [dotnet - .NET Entwicklungsumgebung](d../docker/otnet/)
-* [microservice - Micro Service mit Node.js](../docker/microservice/)
-* [jenkins - Build (CI/CD) Umgebung](../docker/jenkins/)
-
-
-![](../images/Magnifier_36x36.png "Quellenverzeichnis") 10 - Quellenverzeichnis
-======
-
-> [⇧ **Nach oben**](#inhaltsverzeichnis) 

@@ -14,9 +14,8 @@ Sie kennen Möglichkeiten für die Protokollierung & Überwachung, Absicherung v
 #### Inhaltsverzeichnis
 * 01 - [Protokollieren & Überwachen](#-01---protokollieren--%C3%BCberwachen)
 * 02 - [Container sichern & beschränken](#-02---container-sichern--beschr%C3%A4nken)
-* 03 - [Kontinuierliche Integration](#-03---kontinuierliche-integration)
-* 04 - [Fragen](Fragen.md)
-* 05 - [Reflexion LB3](#-05---Reflexion LB3)
+* 03 - [LB3 Reflexion](#05---reflexion-lb3)
+* 04 - [Lerneffekt](#06---lerneffekt)
 
 ___
 
@@ -92,6 +91,38 @@ Da cAdvisor selbst als Container zur Verfügung steht, können wir das Tool in k
 
 Nachdem Hochfahren des Containers, kann er im Browser unter http://localhost:8080 aufgerufen werden.
 
+**Ablauf der Installation** <br>
+
+Dockerfile:
+```Shell
+FROM google/cadvisor:latest
+
+# cAdvisor-Port öffnen
+EXPOSE 8080
+
+# Starten von cAdvisor
+CMD ["/usr/bin/cadvisor", "--logtostderr", "--port=8080"]
+```
+
+Image erstellen:
+
+![](../35-Sicherheit/screenshots/image.PNG)
+
+Container starten:
+
+![](../35-Sicherheit/screenshots/container.PNG)
+
+Webseite anzeigen lassen:
+
+![](../35-Sicherheit/screenshots/webseite.PNG)
+
+
+**Testfälle** <br>
+
+| Nr | Testfall | Soll-Ergebnis | Ist-Ergebnis | Abnahme |
+|----|----------|---------------|--------------|---------|
+| 1  | Funktionalität | Docker image und Container erstellt | Docker image und Container erstellt | Ja |
+| 2  | Funktionalität | Webseite von cAdvisor ist unter http://localhost:8080 erreichbar | Webseite ist erreichbar | Ja |
 
 
 ![](../images/Lock_36x36.png?raw=true "Container sichern & beschränken") 02 - Container sichern & beschränken
@@ -272,116 +303,49 @@ Diese lassen sich auch auf Docker-Container anwenden – entweder durch Übergab
     $ docker run --ulimit cpu=12:14 amouat/stress stress --cpu 1
 ```
 
+**Ablauf der Installation** <br>
 
-![](../images/Continuous_Integration_36x36.png?raw=true "Kontinuierliche Integration") 03 - Kontinuierliche Integration
-======
-
-> [⇧ **Nach oben**](#inhaltsverzeichnis)
-
-Kontinuierliche Integration, auch fortlaufende oder permanente Integration (Continuous Integration), ist ein Begriff aus der Software-Entwicklung, der den Prozess des fortlaufenden Zusammenfügens von Komponenten zu einer Anwendung beschreibt.
-
-Das Ziel der kontinuierlichen Integration ist die Steigerung der Softwarequalität.
-
-Typische Aktionen sind das Übersetzen und Linken der Anwendungsteile, prinzipiell können aber auch beliebige andere Operationen zur Erzeugung abgeleiteter Informationen durchgeführt werden.
-
-Üblicherweise wird dafür nicht nur das Gesamtsystem neu gebaut, sondern es werden auch automatisierte Tests durchgeführt und Software-Metriken zur Messung der Softwarequalität erstellt.
-
-Der gesamte Vorgang wird automatisch ausgelöst durch Einchecken in die Versionsverwaltung.
-
-**Grundsätze**
-* Gemeinsame Codebasis
-* Automatisierte Übersetzung
-* Kontinuierliche Test-Entwicklung
-* Häufige Integration
-* Integration in den Hauptbranch
-* Kurze Testzyklen
-* Gespiegelte Produktionsumgebung
-* Einfacher Zugriff
-* Automatisiertes Reporting
-
-
-### Unittest
-***
-Ein Modultest (auch Komponententest oder oft auch als "Unittest" bezeichnet) wird in der Softwareentwicklung angewendet, um die funktionalen Einzelteile (Module) von Computerprogrammen zu testen, d.h., sie auf korrekte Funktionalität zu prüfen.
-
-![](../images/Unittest.png)
-
-### TravisCI
-***
-
-Travis CI ist ein Cloud basiertes CI System. Es zeichnet sich durch eine gute Integration mit github aus.
-
-* [Konzepte für Anfänger](https://docs.travis-ci.com/user/for-beginners/)
-* [Tutorial](https://docs.travis-ci.com/user/tutorial/)
-
-### Jenkins & Blue Ocean
-***
-
-Jenkins ist ein beliebter Open-Source-CI-Server (Continuous Integration).
-
-Kontinuierliche Lieferung sollte nicht schwer sein. Blue Ocean vereinfacht Jenkins für die Bedürfnisse von normalen Entwicklern. Dabei macht Blue Ocean die ganze harte Arbeit.
-
-Für Jenkins und Blue Ocean braucht es eine Applikation bzw. einen Service welche in einem Git-Repository gespeichert ist und im Repository selbst die Datei `Jenkinsfile`.
-
-```Groovy
-	pipeline {
-    	agent none
-	    stages {
-	        stage('Build') {
-			    agent {
-			        docker {
-			            image 'maven:3-alpine'
-			            args '-v /root/.m2:/root/.m2'
-				    }
-			    } 
-        stage('Build Images') { 
-        	agent any
-            steps {
-            		unstash 'jar'
-            		sh 'ls -l scs-demo-esi-order/target/'
-            		sh 'cd docker/varnish      && /usr/bin/docker build -t misegr/scsesi_varnish .'
-            		sh 'cd scs-demo-esi-common && /usr/bin/docker build -t misegr/scsesi_common .'
-            		sh 'cd scs-demo-esi-order  && /usr/bin/docker build -t misegr/scsesi_order .'
-            }
-        }
-```
-
-**Installation** <br>
-Blue Ocean kann direkt ab dem Docker Hub aufgesetzt werden.
-
-1. Blue Ocean Container starten:
-
-    ```Shell
-        $ docker run \
-        --rm \
-        -u root \
-        -p 8082:8080 \
-        -v jenkins-data:/var/jenkins_home \
-        -v /var/run/docker.sock:/var/run/docker.sock \
-        -v "$HOME":/home \
-        jenkinsci/blueocean
-    ```
-2. User Interface (in diesem Fall: http://localhost:8082/) im Browser öffnen und den Anweisungen folgen. Der Token ist im Terminalfenster ersichtlich.
-3. Open Blue Ocean (rechts) anwählen und neue Pipeline via Button `Git`  Repository: https://github.com/mc-b/SCS-ESI, Username und Password leer lassen und Button `Create Pipeline` erstellen.
-4. Nach dem Build sollten drei neue Docker Images ersichtlich sind, überprüfen mittels:
-
+Dockerfile:
 ```Shell
-    docker image ls
+# Basisimage
+FROM python:3.9
+
+# Benutzer hinzufügen
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Arbeitsverzeichnisse erstellen
+WORKDIR /app
+COPY . /app
+
+# Anforderungen hinzufügen/installieren
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Inhaber von /app ändern
+RUN chown -R appuser:appuser /app
+USER appuser
+
+# Befehle bei Container Start
+CMD ["python", "app.py"]
 ```
-    
-Ausgabe (drei gebuildete Docker Images):
 
-    REPOSITORY              TAG                      IMAGE ID            CREATED             SIZE
-    misegr/scsesi_varnish   latest                   xxxxxxxxxxxx        6 seconds ago       318MB
-    misegr/scsesi_common    latest                   xxxxxxxxxxxx        6 seconds ago       318MB
-    misegr/scsesi_order     latest                   xxxxxxxxxxxx        6 seconds ago       318MB
+Image builden:
 
-Testen mittels (das Starten kann 2 - 3 Minuten dauern):
+![](../35-Sicherheit/screenshots/image_secure.PNG)
 
-	docker run -p 8081:8080 -d misegr/scsesi_order
-	
-Browser starten und [http://localhost:8081](http://localhost:8081) anwählen. Es wird eine einfache Order Applikation angezeigt wo iPods etc. bestellt werden können.
+Container starten:
 
+![](../35-Sicherheit/screenshots/container_secure.PNG)
+
+Kontrolle:
+
+![](../35-Sicherheit/screenshots/hello_world.PNG)
+
+**Testfälle** <br>
+
+| Nr | Testfall | Soll-Ergebnis | Ist-Ergebnis | Abnahme |
+|----|----------|---------------|--------------|---------|
+| 1  | Funktionalität | Docker image und Container wurden erstellt | Beides erstellt  | Ja |
+| 2  | Funktionalität | Man kann die Lokalhost adresse unter https://localhost erreichen | Webseite erreichbar | Ja |
 
 ![](../images/Continuous_Integration_36x36.png?raw=true "Reflexion LB3") 05 - Reflexion LB3
 ======
@@ -402,4 +366,4 @@ Doch genau an diesen Punkten muss man weitermachen, um erfolgreich zu sein. Es g
 Wie oben schon erwähnt habe ich eigentlich kein Vorwissen zu Docker in dieses Modul gebracht. Wir haben vor über einem Jahr mal einen Container verwendet, um ein Ticketsystem zum laufen zu bringen, jedoch habe ich seither nichts mehr mit Docker gearbeitet. Daher war mein Wissen quasi wieder bei Null. 
 
 **Fortschritt** <br>
-Meine Lernkurve war jedoch sehr steil und ich habe, meiner Ansicht nach, nach anfänglichen Schwierigkeiten grosse Fortschritte erzielt. Und darüber bin ich sehr stolz. 
+Meine Lernkurve war jedoch sehr steil und ich habe, meiner Ansicht nach, nach anfänglichen Schwierigkeiten grosse Fortschritte erzielt. Und darüber bin ich sehr stolz. Über Docker habe ich sehr viel gelernt und finde das System sehr gut. Es ist sehr vielseitig und variabel.
